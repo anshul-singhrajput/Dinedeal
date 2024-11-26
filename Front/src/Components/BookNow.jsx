@@ -2,7 +2,7 @@ import React, { useContext, useState } from "react";
 import { DineContext } from "../context/DineContext";
 
 const BookNow = ({ hotel }) => {
-  const { isLoggedIn, addDeal } = useContext(DineContext);
+  const { isLoggedIn, addDeal, navigate } = useContext(DineContext);
 
   const [formData, setFormData] = useState({
     date: "",
@@ -23,17 +23,11 @@ const BookNow = ({ hotel }) => {
   const handleBooking = async (e) => {
     e.preventDefault();
 
-    if (!isLoggedIn) {
-      alert("Please login to book this offer");
-      return;
-    }
-
     if (!formData.date || !formData.time || !formData.people) {
       alert("Please fill in all fields");
       return;
     }
 
-    // Combine hotel and form data
     const bookingDetails = {
       hotelId: hotel.id,
       hotelName: hotel.name,
@@ -56,7 +50,7 @@ const BookNow = ({ hotel }) => {
         addDeal(hotel); // Add to booked deals in context
         alert(`Successfully booked ${hotel.name}`);
         setShowForm(false);
-        setFormData({ date: "", time: "", people: 1 }); // Reset form
+        setFormData({ date: "", time: "", people: 1 });
       } else {
         alert("Failed to book the deal. Please try again.");
       }
@@ -70,8 +64,19 @@ const BookNow = ({ hotel }) => {
     <div className="mt-3 text-right">
       {!showForm ? (
         <button
-          className="bg-blue-600 text-white py-2 px-4 rounded-md text-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          onClick={() => setShowForm(true)}
+          className={`py-2 px-4 rounded-md text-sm ${
+            isLoggedIn
+              ? "bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500"
+              : "bg-gray-400 text-gray-700 cursor-not-allowed"
+          }`}
+          onClick={() => {
+            if (!isLoggedIn) {
+              alert("Please log in to book this offer.");
+              navigate("/login");
+              return;
+            }
+            setShowForm(true);
+          }}
         >
           Book Now
         </button>
@@ -132,13 +137,13 @@ const BookNow = ({ hotel }) => {
             <button
               type="button"
               onClick={() => setShowForm(false)}
-              className="bg-gray-200 text-gray-600 py-2 px-4 rounded-md text-sm hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400"
+              className="bg-gray-200 text-gray-600 py-2 px-4 rounded-md text-sm hover:bg-gray-300 focus:ring-gray-400"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="bg-blue-600 text-white py-2 px-4 rounded-md text-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="bg-blue-600 text-white py-2 px-4 rounded-md text-sm hover:bg-blue-700 focus:ring-blue-500"
             >
               Confirm Booking
             </button>

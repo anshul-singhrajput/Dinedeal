@@ -4,10 +4,12 @@ import "dotenv/config";
 import connectDB from "./config/mongodb.js";
 import userRouter from "./routes/authRoutes.js";
 
+
 // App Config
 const app = express();
 const port = process.env.PORT || 4000;
 connectDB();
+
 
 //middlewares
 app.use(express.json());
